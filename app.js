@@ -41,6 +41,14 @@ app.get('/', function(req,res){
     });
 });
 
+// exchange 클릭시 mincho 거래소 ejs 렌더링
+app.get('/exchange', function(req,res){
+    res.render('exchange',{
+        title : ejs.render('title')
+    });
+});
+
+// blockchain의 정보와 개수 등을 정리해서 보여줌
 app.get('/getblockchaininfo', function(req,res){
     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockchaininfo","params":[]}`;
     const options = {
@@ -54,9 +62,8 @@ app.get('/getblockchaininfo', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            console.log(body);
             res.render('getblockchaininfo',{
-                data : body,
+                data : data.result,
                 title : ejs.render('title')
             });
             // res.send(data);

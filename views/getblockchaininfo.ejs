@@ -9,9 +9,11 @@
 <body>
     <%- include('title') %>
     <div>
-        <div>
-            blocks(블록 개수) : <%= data %>
-        </div>
+        <ul>
+            <li>bestblockhash : <%= data.bestblockhash %></li>
+            <li>blocks(블록 개수) : <%= data.blocks %></li>
+            <li>difficulty : <%= data.difficulty %></li>
+        </ul>
     </div>
 </body>
 </html>
