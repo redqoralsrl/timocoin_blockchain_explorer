@@ -48,7 +48,7 @@ app.get('/exchange', function(req,res){
     });
 });
 
-// blockchain의 정보와 개수 등을 정리해서 보여줌
+// 블록체인 처리와 관련된 다양한 상태 정보가 포함된 개체를 반환
 app.get('/getblockchaininfo', function(req,res){
     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockchaininfo","params":[]}`;
     const options = {
@@ -62,6 +62,7 @@ app.get('/getblockchaininfo', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
+            console.log(data);
             res.render('getblockchaininfo',{
                 data : data.result,
                 title : ejs.render('title')
@@ -71,6 +72,31 @@ app.get('/getblockchaininfo', function(req,res){
     };
     request(options, callback);
 })
+
+// P2P 네트워킹과 관련된 다양한 상태 정보가 포함된 개체를 반환
+app.get('/getnetworkinfo', function(req,res){
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
+    const options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    }
+    callback = (error, response, body) => {
+        if(error) console.log(error);
+        console.log('실행');
+        if(!error && response.statusCode == 200){
+            const data = JSON.parse(body); // Object로 나옴
+            console.log(data);
+            res.render('getnetworkinfo',{
+                data : data.result,
+                title : ejs.render('title')
+            });
+            // res.send(data);
+        }
+    };
+    request(options, callback);
+});
 
 // 서버 연결 상태 확인
 server.listen(port, hostname, () => {

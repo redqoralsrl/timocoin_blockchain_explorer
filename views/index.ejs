@@ -5,13 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timocoin API</title>
+    <link rel="stylesheet" href="/styles/index.css"/>
+    <link rel="shortcut icon" href="/images/timo.ico" type="image/x-icon">
+    <link rel="icon" href="/images/timo.ico" type="image/x-icon">
 </head>
 <body>
     <%- include('title') %>
     <div class="container">
+        <div class="intro">
+            <img src="/images/timo.png">
+            Timocoin Explorer
+        </div>
         <ul>
             <li><a href="/getblockchaininfo">getblockchaininfo</a></li>
-            
+            <li><a href="/getnetworkinfo">getnetworkinfo</a></li>
         </ul>
     </div>
 </body>
