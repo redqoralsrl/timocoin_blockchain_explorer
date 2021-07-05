@@ -98,6 +98,40 @@ app.get('/getnetworkinfo', function(req,res){
     request(options, callback);
 });
 
+// 상세도가 0이면 블록 '해시'에 대해 16진 인코딩된 직렬화된 문자열을 반환
+// 상세도가 1이면 블록 '해시'에 대한 정보가 포함된 개체를 반환
+// 세부 정보가 2이면 블록 '해시'에 대한 정보와 각 트랜잭션에 대한 정보가 포함된 개체를 반환
+app.get('/getblock', function(req,res){
+    res.render('getblock',{
+        data : "",
+        title : ejs.render('title')
+    });
+});
+
+app.post('/getblock', function(req,res){
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${req.body.blockhash}"]}`;
+    const options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    }
+    callback = (error, response, body) => {
+        if(error) console.log(error);
+        console.log('실행');
+        if(!error && response.statusCode == 200){
+            const data = JSON.parse(body); // Object로 나옴
+            console.log(data);
+            res.render('getblock',{
+                data : data.result,
+                title : ejs.render('title')
+            });
+            // res.send(data);
+        }
+    };
+    request(options, callback);
+});
+
 // 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환
 app.get('/getblockhash', function(req,res){
     res.render('getblockhash',{
