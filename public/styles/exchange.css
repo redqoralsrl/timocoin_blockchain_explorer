@@ -3,13 +3,15 @@
     padding: 0;
 }
 .exchange_container{
-    background: rgb(39, 39, 109);
+    /* background: rgb(39, 39, 109); */
+    background: rgb(69 150 162);
     color: #fff;
 }
 .com{
     display: flex;
     -webkit-box-align: center;
     align-items: center;
+    justify-content: space-around;
 }
 .left{
     display: flex;
