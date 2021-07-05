@@ -11,9 +11,18 @@ dotenv.config(); //  dotenv 적용
 const app = express();
 const server = http.createServer(app);
 
+
+
 // bodyParser 데이터 안깨지기 위한 설정
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+
+const indexRouter = require('./routers/index');
+const signupRouter = require('./routers/signup');
+const signinRouter = require('./routers/signin');
+app.use('/', indexRouter);
+app.use('/signup', signupRouter);
+app.use('/signin', signinRouter);
 
 // 호스트와 포트 설정
 const hostname = '127.0.0.1'; // 로컬 호스트
@@ -35,11 +44,11 @@ app.use(express.static(path.join(__dirname, 'routes'))); // routes 폴더 설정
 app.use(express.static(path.join(__dirname, 'public'))); // public 폴더 설정
 
 // 처음 시작시 렌더링 되는 곳
-app.get('/', function(req,res){
-    res.render('index',{
-        title : ejs.render('title')
-    });
-});
+// app.get('/', function(req,res){
+//     res.render('index',{
+//         title : ejs.render('title')
+//     });
+// });
 
 // exchange 클릭시 mincho 거래소 ejs 렌더링
 app.get('/exchange', function(req,res){
@@ -62,7 +71,7 @@ app.get('/getblockchaininfo', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            console.log(data);
+            console.log("getblockchaininfo", data);
             res.render('getblockchaininfo',{
                 data : data.result,
                 title : ejs.render('title')
@@ -87,7 +96,7 @@ app.get('/getnetworkinfo', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            console.log(data);
+            console.log("getnetworkinfo", data);
             res.render('getnetworkinfo',{
                 data : data.result,
                 title : ejs.render('title')
@@ -98,6 +107,7 @@ app.get('/getnetworkinfo', function(req,res){
     request(options, callback);
 });
 
+<<<<<<< HEAD
 // 상세도가 0이면 블록 '해시'에 대해 16진 인코딩된 직렬화된 문자열을 반환
 // 상세도가 1이면 블록 '해시'에 대한 정보가 포함된 개체를 반환
 // 세부 정보가 2이면 블록 '해시'에 대한 정보와 각 트랜잭션에 대한 정보가 포함된 개체를 반환
@@ -133,6 +143,9 @@ app.post('/getblock', function(req,res){
 });
 
 // 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환
+=======
+// 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환하고 블록 정보를 받아옴
+>>>>>>> be6115166db710410bcf37b186f43c4413eec2d5
 app.get('/getblockhash', function(req,res){
     res.render('getblockhash',{
         data : "",
@@ -140,9 +153,9 @@ app.get('/getblockhash', function(req,res){
     });
 });
 
-app.post('/getblockhash', function(req,res){
-    if(req.body.blockhash < 0) res.send('<script>alert("음수는 입력할 수 없습니다");history.back();</script>')
-    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${req.body.blockhash}]}`;
+app.post('/getblockhash', function(req,res,next){
+    if(req.body.blocknum < 0) res.send('<script>alert("음수는 입력할 수 없습니다");history.back();</script>')
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${req.body.blocknum}]}`;
     const options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
         method: "POST",
@@ -154,12 +167,123 @@ app.post('/getblockhash', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            console.log(data);
-            res.render('getblockhash',{
-                data : data.result,
+            console.log("getblockhash", data);
+            req.blockhash = data.result;
+            next();
+        }
+    };
+    request(options, callback);
+});
+app.post('/getblockhash', function(req,res,next){
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${req.blockhash}"]}`;
+    const options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    };
+    callback = (error, response, body) => {
+        if(error) console.log(error);
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body);
+            console.log("getblock", data);
+            res.render('getblockhash', {
+                data: data.result,
+                title: ejs.render('title')
+            })
+        }
+    };
+    request(options, callback);
+});
+
+//채굴 관련 정보를 포함하는 json 객체를 반환
+app.get("/getmininginfo", (req, res) => {
+    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getmininginfo","params":[]}`;
+    var options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    };
+
+    callback = (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body);
+            console.log("getmininginfo", data);
+            res.render('getmininginfo', {
+                data: data.result,
                 title : ejs.render('title')
-            });
-            // res.send(data);
+            })
+        }
+    };
+    request(options, callback);
+});
+
+//지갑 정보
+app.get("/getwalletinfo", (req, res) => {
+    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getwalletinfo","params":[]}`;
+    var options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    };
+
+    callback = (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body);
+            console.log("getwalletinfo", data);
+            res.render('getwalletinfo', {
+                data: data.result,
+                title : ejs.render('title')
+            })
+        }
+    };
+    request(options, callback);
+});
+
+//지갑 리스트
+app.get("/listwallets", (req, res) => {
+    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listwallets","params":[]}`;
+    var options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    };
+
+    callback = (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body);
+            console.log("listwallets", data);
+            res.render('listwallets', {
+                data: data.result,
+                title : ejs.render('title')
+            })
+        }
+    };
+    request(options, callback);
+});
+
+//거래내역 리스트
+//parmas:[] 면 최근 10개, "*" 20 100면 100~120
+app.get("/listtransactions", (req, res) => {
+    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
+    var options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    };
+
+    callback = (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body);
+            console.log("listtransactions", data);
+            res.render('listtransactions', {
+                data: data.result,
+                title : ejs.render('title')
+            })
         }
     };
     request(options, callback);
@@ -167,5 +291,5 @@ app.post('/getblockhash', function(req,res){
 
 // 서버 연결 상태 확인
 server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+    console.log(`Server running at http://${hostname}:${port}/`);
 });

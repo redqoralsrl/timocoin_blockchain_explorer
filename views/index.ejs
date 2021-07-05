@@ -17,10 +17,20 @@
             Timocoin Explorer
         </div>
         <ul>
+            <% if(logined == true) { %>
+            <li><a href="/signin">logout</a></li>
+            <% } else { %>
+            <li><a href="/signup">signup</a></li>
+            <li><a href="/signin">signin</a></li>
+            <% } %>
             <li><a href="/getblockchaininfo">getblockchaininfo</a></li>
             <li><a href="/getnetworkinfo">getnetworkinfo</a></li>
             <li><a href="/getblock">getblock</a></li>
             <li><a href="/getblockhash">getblockhash</a></li>
+            <li><a href="/getmininginfo">getmininginfo</a></li>
+            <li><a href="/getwalletinfo">getwalletinfo</a></li>
+            <li><a href="/listwallets">listwallets</a></li>
+            <li><a href="/listtransactions">listtransactions</a></li>
         </ul>
     </div>
 </body>
