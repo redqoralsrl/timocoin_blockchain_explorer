@@ -98,6 +98,39 @@ app.get('/getnetworkinfo', function(req,res){
     request(options, callback);
 });
 
+// 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환
+app.get('/getblockhash', function(req,res){
+    res.render('getblockhash',{
+        data : "",
+        title : ejs.render('title')
+    });
+});
+
+app.post('/getblockhash', function(req,res){
+    if(req.body.blockhash < 0) res.send('<script>alert("음수는 입력할 수 없습니다");history.back();</script>')
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${req.body.blockhash}]}`;
+    const options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    }
+    callback = (error, response, body) => {
+        if(error) console.log(error);
+        console.log('실행');
+        if(!error && response.statusCode == 200){
+            const data = JSON.parse(body); // Object로 나옴
+            console.log(data);
+            res.render('getblockhash',{
+                data : data.result,
+                title : ejs.render('title')
+            });
+            // res.send(data);
+        }
+    };
+    request(options, callback);
+});
+
 // 서버 연결 상태 확인
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);

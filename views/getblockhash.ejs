@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timocoin API</title>
+    <link rel="stylesheet" href="/styles/index.css"/>
+    <link rel="shortcut icon" href="/images/timo.ico" type="image/x-icon">
+    <link rel="icon" href="/images/timo.ico" type="image/x-icon">
+    <script>
+        function copy(){
+            const copyText = document.getElementById('answerHash');
+            copyText.select();
+            document.execCommand("Copy");
+            alert("Copied!!");
+        }
+    </script>
+</head>
+<body>
+    <%- include('title') %>
+    <div class="body_table">
+        <div class="chaininfo">
+            <img src="/images/timo.png" width="50px" height="50px">
+            Timocoin Blockchain Information
+            <!-- <div>Timocoin Blockchain Information</div> -->
+        </div>
+        <div class="chain_body">
+            <div class="chain_block">
+                <p class="blockp">
+                    getblockhash
+                </p>
+            </div>
+            <div class="chain_block">
+                <div class="block_title">
+                    Input height index
+                </div>
+                <div class="block_comment">
+                    <form action="/getblockhash" method="POST">
+                        <input id="input_text" type="number" name="blockhash" required>
+                        <input id="input_submit" type="submit" value="Enter">
+                    </form>
+                </div>
+            </div>
+            <div class="chain_block">
+                <div class="block_title">
+                    blockhash(블록 해쉬)
+                </div>
+                <div class="block_comment">
+                    <% if(data != ""){ %>
+                        <input type="text" id="answerHash" value="<%= data %>" readonly>
+                        <input id="input_submit" onclick="copy()" type="button" value="Copy">
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
