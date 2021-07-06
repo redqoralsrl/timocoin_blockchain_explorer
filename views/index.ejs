@@ -1,39 +1,115 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timocoin API</title>
-    <link rel="stylesheet" href="/styles/index.css"/>
+    <!-- <link rel="stylesheet" href="/styles/index.css"/> -->
+    <link rel="stylesheet" href="/styles/main.css">
     <link rel="shortcut icon" href="/images/timo.ico" type="image/x-icon">
     <link rel="icon" href="/images/timo.ico" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script>
+        $(function () {
+            setInterval(() => {
+                $.ajax({
+                    url: '/block_transaction',
+                    dataType: 'json',
+                    type: 'GET'
+                })
+                    .done(function (result) {
+                        $('.table_line').remove();
+                        for (let i = 9; i >= 0; i--) {
+                            let rowHtml = `<div class="table_line"><div class="head0 body_t">${result[i].height}</div>`;
+                            rowHtml += `<div class="head1 body_t"><div class="hash_resize">0x${result[i].blockhash.substring(0, 3)}...${result[i].blockhash.substring(result[i].blockhash.length - 3, result[i].blockhash.length)}</div></div>`;
+                            rowHtml += `<div class="head2 body_t">${result[i].blocktime}</div>`;
+                            rowHtml += `<div class="head3 body_t">${result[i].amount}</div>`;
+                            rowHtml += `<div class="head4 body_t"><div class="hash_resize address_resize">${result[i].address.substring(0, 3)}...${result[i].address.substring(result[i].address.length - 3, result[i].address.length)}</div></div>`;
+                            rowHtml += `</div>`;
+                            $(".table_tbody").append(rowHtml);
+                        }
+                    })
+            }, 1000)
+
+        })
+    </script>
 </head>
 <body>
     <%- include('title') %>
-    <div class="container">
-        <!-- <div class="intro">
-            <img src="/images/timo.png">
-            Timocoin Explorer
+    <div class="body">
+        <div class="blur">
+            <div class="container">
+                <div class="networks">
+                    <div class="networks_main">
+                        <%= getblockchaininfo.chain %> network
+                    </div>
+                </div>
+                <div class="Main_page">
+                    <div class="search_box">
+                        <form action="#">
+                            <div class="form_input">
+                                <input type="text" class="hash_input" placeholder="Search your transaction, an address or a block">
+                                <button type="submit" class="hash_button"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="indicators">
+                        <div class="blockheight_indicator">
+                            <h4 class="mainbox_title">Block Height</h4>
+                            <div class="blockheight_view">
+                                <i class="fab fa-hive"></i> <%= getblockchaininfo.blocks%>
+                            </div>
+                        </div>
+                        <div class="network_indicator">
+                            <h4 class="mainbox_title">Block Information</h4>
+                            <div class="network_boxes">
+                                <div class="nework_indicator_box">
+                                    <div>
+                                        <h3><%= getnetworkinfo.connections %></h3>
+                                        <h6>Consensus Nodes</h6>
+                                    </div>
+                                </div>
+                                <div class="nework_indicator_box">
+                                    <div>
+                                        <h4><%= difficulty %></h4>
+                                        <h6>Difficulty</h6>
+                                    </div>
+                                </div>
+                                <div class="nework_indicator_box">
+                                    <div>
+                                        <h3><%= blocktime %></h3>
+                                        <h6>Avg Block Time
+                                            <br>(recent 10 blocks)</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="transactions">
+                        <div class="ts_box">
+                            <header class="ts_title">Recent Transactions</header>
+                            <div class="ts_body">
+                                <div class="ts_body_in">
+                                    <div class="table_head">
+                                        <div class="head0 head_t">Block</div>
+                                        <div class="head1 head_t">BlockHash</div>
+                                        <div class="head2 head_t">Time</div>
+                                        <div class="head3 head_t">Amount</div>
+                                        <div class="head4 head_t">Address</div>
+                                    </div>
+                                    <div class="table_tbody">
+                                        <div class="table_line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul>
-            <% if(logined == true) { %>
-            <li><a href="/signin">logout</a></li>
-            <% } else { %>
-            <li><a href="/signup">signup</a></li>
-            <li><a href="/signin">signin</a></li>
-            <% } %>
-            <li><a href="/getblockchaininfo">getblockchaininfo</a></li>
-            <li><a href="/getnetworkinfo">getnetworkinfo</a></li>
-            <li><a href="/getblock">getblock</a></li>
-            <li><a href="/getblockhash">getblockhash</a></li>
-            <li><a href="/getmininginfo">getmininginfo</a></li>
-            <li><a href="/getwalletinfo">getwalletinfo</a></li>
-            <li><a href="/listwallets">listwallets</a></li>
-            <li><a href="/listtransactions">listtransactions</a></li>
-        </ul> -->
-
-        
     </div>
 </body>
 </html>
