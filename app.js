@@ -20,9 +20,11 @@ app.use(bodyParser.json());
 const indexRouter = require('./routers/index');
 const signupRouter = require('./routers/signup');
 const signinRouter = require('./routers/signin');
+const sendfromRouter = require('./routers/sendfrom');
 app.use('/', indexRouter);
 app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
+app.use('/sendfrom', sendfromRouter);
 
 // 호스트와 포트 설정
 const hostname = '127.0.0.1'; // 로컬 호스트
