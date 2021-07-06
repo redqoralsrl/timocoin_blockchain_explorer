@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 const indexRouter = require('./routers/index');
 const signupRouter = require('./routers/signup');
 const signinRouter = require('./routers/signin');
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
 
@@ -44,11 +44,13 @@ app.use(express.static(path.join(__dirname, 'routes'))); // routes 폴더 설정
 app.use(express.static(path.join(__dirname, 'public'))); // public 폴더 설정
 
 // 처음 시작시 렌더링 되는 곳
-// app.get('/', function(req,res){
-//     res.render('index',{
-//         title : ejs.render('title')
-//     });
-// });
+app.get('/', function(req,res){
+    res.render('index',{
+        title : ejs.render('title'),
+        logined : req.session.logined,
+        userId : req.session.userId,
+    });
+});
 
 // exchange 클릭시 mincho 거래소 ejs 렌더링
 app.get('/exchange', function(req,res){
