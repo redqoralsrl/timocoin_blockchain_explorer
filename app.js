@@ -107,7 +107,6 @@ app.get('/getnetworkinfo', function(req,res){
     request(options, callback);
 });
 
-<<<<<<< HEAD
 // 상세도가 0이면 블록 '해시'에 대해 16진 인코딩된 직렬화된 문자열을 반환
 // 상세도가 1이면 블록 '해시'에 대한 정보가 포함된 개체를 반환
 // 세부 정보가 2이면 블록 '해시'에 대한 정보와 각 트랜잭션에 대한 정보가 포함된 개체를 반환
@@ -143,9 +142,6 @@ app.post('/getblock', function(req,res){
 });
 
 // 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환
-=======
-// 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환하고 블록 정보를 받아옴
->>>>>>> be6115166db710410bcf37b186f43c4413eec2d5
 app.get('/getblockhash', function(req,res){
     res.render('getblockhash',{
         data : "",
