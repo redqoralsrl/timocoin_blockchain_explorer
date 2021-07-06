@@ -17,8 +17,16 @@ router.use(session);
 
 router.get('/', function(req,res) {
     if(req.session.userId != undefined) {
-        res.render('sendfrom',{
-            title : ejs.render('title'),
+        client.query("select id, addr from users where id!=?", [req.session.userId], (error, result) => {
+            if(result != "") {
+                res.render('sendfrom',{
+                    title: ejs.render('title'),
+                    users: result, 
+                });
+            }
+            else {
+                res.send("<script language=\"javascript\">alert('[ ERROR ] : No exist otrhers'); location.replace('/');</script>");
+            }
         });
     }
     else {
@@ -37,12 +45,12 @@ router.post('/', function(req, res) {
     const account = req.session.userId;
     const coinCount = req.body.coinCount;
     const recvAddr = req.body.recvAddr;
+
     console.log("샌드프롬 ==>", account);
     console.log("샌드프롬 ==>", coinCount);
     console.log("샌드프롬 ==>", recvAddr);
 
     const dataString = `{"jsonrpc": "1.0", "id":"${ID_STRING}", "method": "sendfrom", "params": ["${account}", "${recvAddr}", ${coinCount}] }`;
-    // const dataString = `{"jsonrpc": "1.0", "id":"${ID_STRING}", "method": "sendfrom", "params": ["yu", "${recvAddr}", ${coinCount}] }`;
     const options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
         method: "POST",
