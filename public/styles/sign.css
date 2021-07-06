@@ -1,8 +1,6 @@
 body {
     background-color: #ffffff;
-    /* background-color: #4596A2; */
     color: #ffffff;
-    /* font-family: "Roboto black"; */
 }
 
 /* .bg {
@@ -66,10 +64,11 @@ body {
 }
 
 .sign input[type="submit"]:hover {
-    border: none;
-    background-color: #EEA422;
     color: #ffffff;
+    border: 2px solid #EEA422;
+    background-color: #EEA422;
 }
+
 p {
     margin: 20px 30px 0 0;
     text-align: right;
@@ -77,4 +76,10 @@ p {
 a {
     text-decoration: none;
     color: #EEA422;
+    transition: 0.5s;
+}
+a:hover {
+    color: #EEA422;
+    font-weight: 600;
+    font-size: larger;
 }

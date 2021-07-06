@@ -17,7 +17,7 @@
             Timocoin Explorer
         </div>
         <ul>
-            <% if(logined == true) { %>
+            <% if(userId != undefined) { %>
             <li><a href="/signin/logout">logout</a></li>
             <% } else { %>
             <li><a href="/signup">signup</a></li>

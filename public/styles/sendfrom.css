@@ -1,0 +1,59 @@
+.container {
+    width: 800px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+}
+
+.container > h1 {
+    margin: 0;
+    padding: 20px 0 20px 0;
+    color: #EEA422;
+}
+
+.myInfo > li {
+    margin-bottom: 8px;
+}
+
+.myInfo > li > b {
+    margin-right: 15px;
+}
+
+.sendForm {
+    width: 100%;
+    padding: 100px 0 100px 0;
+    margin-left: 100px;
+}
+
+.recvAddr {
+    margin-right: 20px;
+    padding: 5px 100px 5px 0;
+    outline: none;
+    border: 1px solid #999;
+    cursor: pointer;
+}
+
+.sendForm input[type="text"] {
+    margin-right: 10px;
+    padding: 5px 100px 5px 0;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #999;
+    font-size: 20px;
+}
+
+.sendForm input[type="submit"] {
+    padding: 5px;
+    outline: none;
+    background-color: #ffffff;
+    border: 1px solid #999;
+    cursor: pointer;
+}
+.sendForm input[type="submit"]:hover {
+    color: #ffffff;
+    background-color: #EEA422;
+    border: 1px solid #EEA422;
+}

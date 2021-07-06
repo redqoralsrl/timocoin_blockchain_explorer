@@ -13,7 +13,7 @@ router.get('/', function(req,res) {
     }
     else {
         res.render('signin',{
-            title : ejs.render('title'),
+            title: ejs.render('title'),
         });
     }
 });
