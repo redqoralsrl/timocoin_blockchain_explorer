@@ -5,13 +5,16 @@ const path = require('path'); // 패치하기
 const ejs = require('ejs'); // ejs 사용
 const request = require('request'); // 요청데이터 처리
 const dotenv = require("dotenv"); // 환경변수 .env사용
+const session = require('./routers/session'); // 세션 설정
+
 dotenv.config(); //  dotenv 적용
+
 
 // express 연결
 const app = express();
 const server = http.createServer(app);
 
-
+app.use(session); //세션 사용
 
 // bodyParser 데이터 안깨지기 위한 설정
 app.use(bodyParser.urlencoded({extended:false}));
@@ -20,7 +23,7 @@ app.use(bodyParser.json());
 const indexRouter = require('./routers/index');
 const signupRouter = require('./routers/signup');
 const signinRouter = require('./routers/signin');
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
 
@@ -43,22 +46,26 @@ app.set('views', './views'); // views 폴더 설정
 app.use(express.static(path.join(__dirname, 'routes'))); // routes 폴더 설정
 app.use(express.static(path.join(__dirname, 'public'))); // public 폴더 설정
 
+function Unix_timestamp(t){
+    t = Number(t);
+    var date = new Date(t*1000);
+    // var year = date.getFullYear();
+    // var month = "0" + (date.getMonth()+1);
+    // var day = "0" + date.getDate();
+    // var hour = "0" + date.getHours();
+    // var minute = "0" + date.getMinutes();
+    // var second = "0" + date.getSeconds();
+    // return hour.substr(-2) + ":" + minute.substr(-2) + ":" + second.substr(-2);
+    var hour = date.getHours()-9;
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    return hour == 0 ? minute == 0 ? second + 's' : minute + '.' + second + 'm' : hour + '.' + minute + 'h';
+    // return hour + ":" + minute + ":" + second;
+}
+
 // 처음 시작시 렌더링 되는 곳
-// app.get('/', function(req,res){
-//     res.render('index',{
-//         title : ejs.render('title')
-//     });
-// });
-
-// exchange 클릭시 mincho 거래소 ejs 렌더링
-app.get('/exchange', function(req,res){
-    res.render('exchange',{
-        title : ejs.render('title')
-    });
-});
-
-// 블록체인 처리와 관련된 다양한 상태 정보가 포함된 개체를 반환
-app.get('/getblockchaininfo', function(req,res){
+app.get('/', function(req,res,next){
+    const da = [];
     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockchaininfo","params":[]}`;
     const options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
@@ -71,19 +78,14 @@ app.get('/getblockchaininfo', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            console.log("getblockchaininfo", data);
-            res.render('getblockchaininfo',{
-                data : data.result,
-                title : ejs.render('title')
-            });
-            // res.send(data);
+            da.push(data);
+            req.datas = da;
+            next();
         }
     };
     request(options, callback);
-})
-
-// P2P 네트워킹과 관련된 다양한 상태 정보가 포함된 개체를 반환
-app.get('/getnetworkinfo', function(req,res){
+});
+app.get('/', function(req,res,next){
     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
     const options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
@@ -96,194 +98,356 @@ app.get('/getnetworkinfo', function(req,res){
         console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            console.log("getnetworkinfo", data);
-            res.render('getnetworkinfo',{
-                data : data.result,
-                title : ejs.render('title')
-            });
-            // res.send(data);
-        }
-    };
-    request(options, callback);
-});
-
-// 상세도가 0이면 블록 '해시'에 대해 16진 인코딩된 직렬화된 문자열을 반환
-// 상세도가 1이면 블록 '해시'에 대한 정보가 포함된 개체를 반환
-// 세부 정보가 2이면 블록 '해시'에 대한 정보와 각 트랜잭션에 대한 정보가 포함된 개체를 반환
-app.get('/getblock', function(req,res){
-    res.render('getblock',{
-        data : "",
-        title : ejs.render('title')
-    });
-});
-
-app.post('/getblock', function(req,res){
-    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${req.body.blockhash}"]}`;
-    const options = {
-        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
-        method: "POST",
-        headers: headers,
-        body: dataString
-    }
-    callback = (error, response, body) => {
-        if(error) console.log(error);
-        console.log('실행');
-        if(!error && response.statusCode == 200){
-            const data = JSON.parse(body); // Object로 나옴
-            console.log(data);
-            res.render('getblock',{
-                data : data.result,
-                title : ejs.render('title')
-            });
-            // res.send(data);
-        }
-    };
-    request(options, callback);
-});
-
-// 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환
-app.get('/getblockhash', function(req,res){
-    res.render('getblockhash',{
-        data : "",
-        title : ejs.render('title')
-    });
-});
-
-app.post('/getblockhash', function(req,res,next){
-    if(req.body.blocknum < 0) res.send('<script>alert("음수는 입력할 수 없습니다");history.back();</script>')
-    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${req.body.blocknum}]}`;
-    const options = {
-        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
-        method: "POST",
-        headers: headers,
-        body: dataString
-    }
-    callback = (error, response, body) => {
-        if(error) console.log(error);
-        console.log('실행');
-        if(!error && response.statusCode == 200){
-            const data = JSON.parse(body); // Object로 나옴
-            console.log("getblockhash", data);
-            req.blockhash = data.result;
+            req.datas.push(data);
             next();
         }
     };
     request(options, callback);
 });
-app.post('/getblockhash', function(req,res,next){
-    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${req.blockhash}"]}`;
+app.get('/', function(req,res,next){
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getmininginfo","params":[]}`;
     const options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
         method: "POST",
         headers: headers,
         body: dataString
-    };
+    }
     callback = (error, response, body) => {
         if(error) console.log(error);
-        if (!error && response.statusCode == 200) {
-            const data = JSON.parse(body);
-            console.log("getblock", data);
-            res.render('getblockhash', {
-                data: data.result,
-                title: ejs.render('title')
-            })
+        console.log('실행');
+        if(!error && response.statusCode == 200){
+            const data = JSON.parse(body); // Object로 나옴
+            req.datas.push(data);
+            next();
         }
     };
     request(options, callback);
 });
-
-//채굴 관련 정보를 포함하는 json 객체를 반환
-app.get("/getmininginfo", (req, res) => {
-    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getmininginfo","params":[]}`;
-    var options = {
+app.get('/', function(req,res,next){
+    let time_sum = 0;
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
+    const options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
         method: "POST",
         headers: headers,
         body: dataString
-    };
-
+    }
     callback = (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-            const data = JSON.parse(body);
-            console.log("getmininginfo", data);
-            res.render('getmininginfo', {
-                data: data.result,
-                title : ejs.render('title')
-            })
+        if(error) console.log(error);
+        console.log('실행');
+        if(!error && response.statusCode == 200){
+            const data = JSON.parse(body); // Object로 나옴
+            // data.result[0].blockheight = 1;  //이런식으로 블록height 넣어주자!
+            console.log('listtransactions', data.result[0]);
+            for(let i = 9; i > 0; i--){
+                time_sum += data.result[i].blocktime - data.result[i-1].blocktime;
+            }
+            req.blocktime = time_sum / 10;
+            req.datas.push(data);
+            next();
         }
     };
     request(options, callback);
 });
+app.get('/', function(req, res, next){
+    res.render('index',{
+        title : ejs.render('title'),
+        logined : req.session.logined,
+        userId : req.session.userId,
+        getblockchaininfo : req.datas[0].result,
+        getnetworkinfo : req.datas[1].result,
+        getmininginfo : req.datas[2].result,
+        listtransactions : req.datas[3].result,
+        difficulty : Math.round(req.datas[0].result.difficulty * 100000)/100000,
+        blocktime: Unix_timestamp(req.blocktime),
+        transaction: undefined,
+    });
+});
 
-//지갑 정보
-app.get("/getwalletinfo", (req, res) => {
-    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getwalletinfo","params":[]}`;
-    var options = {
+app.get('/block_transaction', function(req, res, next){
+    const da = [];
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
+    let options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
         method: "POST",
         headers: headers,
         body: dataString
-    };
-
+    }
     callback = (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-            const data = JSON.parse(body);
-            console.log("getwalletinfo", data);
-            res.render('getwalletinfo', {
-                data: data.result,
-                title : ejs.render('title')
-            })
+        if(error) console.log(error);
+        console.log('ajax');
+        if(!error && response.statusCode == 200){
+            const data = JSON.parse(body); // Object로 나옴
+            for(let i = 0; i < 10; i++){
+                options.body =  `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${data.result[i].blockhash}"]}`;
+                callback1 = (error, response, body) => {
+                    if(error) console.log(error);
+                    if(!error && response.statusCode == 200){
+                        const _data = JSON.parse(body);
+                        data.result[i].height = _data.result.height;
+                        // console.log('속에거', data);
+                        if(i == 9){
+                            res.send(data.result);
+                        }
+                    }
+                }
+                request(options, callback1);
+            }
+            // next();
         }
     };
     request(options, callback);
 });
+// app.get('/block_transaction', function(req, res, next){
+    
+// });
 
-//지갑 리스트
-app.get("/listwallets", (req, res) => {
-    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listwallets","params":[]}`;
-    var options = {
-        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
-        method: "POST",
-        headers: headers,
-        body: dataString
-    };
 
-    callback = (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-            const data = JSON.parse(body);
-            console.log("listwallets", data);
-            res.render('listwallets', {
-                data: data.result,
-                title : ejs.render('title')
-            })
-        }
-    };
-    request(options, callback);
+
+
+
+
+
+
+
+
+
+// exchange 클릭시 mincho 거래소 ejs 렌더링
+app.get('/exchange', function(req,res){
+    res.render('exchange',{
+        title : ejs.render('title')
+    });
 });
 
-//거래내역 리스트
-//parmas:[] 면 최근 10개, "*" 20 100면 100~120
-app.get("/listtransactions", (req, res) => {
-    var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
-    var options = {
-        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
-        method: "POST",
-        headers: headers,
-        body: dataString
-    };
+// // 제공된 높이에서 최상의 블록 체인의 블록 해시를 반환
+// app.get('/getblockhash', function(req,res){
+//     res.render('getblockhash',{
+//         data : "",
+//         title : ejs.render('title')
+//     });
+// });
 
-    callback = (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-            const data = JSON.parse(body);
-            console.log("listtransactions", data);
-            res.render('listtransactions', {
-                data: data.result,
-                title : ejs.render('title')
-            })
-        }
-    };
-    request(options, callback);
-});
+// app.post('/getblockhash', function(req,res,next){
+//     if(req.body.blocknum < 0) res.send('<script>alert("음수는 입력할 수 없습니다");history.back();</script>')
+//     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${req.body.blocknum}]}`;
+//     const options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     }
+//     callback = (error, response, body) => {
+//         if(error) console.log(error);
+//         console.log('실행');
+//         if(!error && response.statusCode == 200){
+//             const data = JSON.parse(body); // Object로 나옴
+//             console.log("getblockhash", data);
+//             req.blockhash = data.result;
+//             next();
+//         }
+//     };
+//     request(options, callback);
+// });
+// app.post('/getblockhash', function(req,res,next){
+//     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${req.blockhash}"]}`;
+//     const options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     };
+//     callback = (error, response, body) => {
+//         if(error) console.log(error);
+//         if (!error && response.statusCode == 200) {
+//             const data = JSON.parse(body);
+//             console.log("getblock", data);
+//             res.render('getblockhash', {
+//                 data: data.result,
+//                 title: ejs.render('title')
+//             })
+//         }
+//     };
+//     request(options, callback);
+// });
+
+// // 블록체인 처리와 관련된 다양한 상태 정보가 포함된 개체를 반환
+// app.get('/getblockchaininfo', function(req,res){
+//     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockchaininfo","params":[]}`;
+//     const options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     }
+//     callback = (error, response, body) => {
+//         if(error) console.log(error);
+//         console.log('실행');
+//         if(!error && response.statusCode == 200){
+//             const data = JSON.parse(body); // Object로 나옴
+//             console.log("getblockchaininfo", data);
+//             res.render('getblockchaininfo',{
+//                 data : data.result,
+//                 title : ejs.render('title')
+//             });
+//             // res.send(data);
+//         }
+//     };
+//     request(options, callback);
+// })
+
+// // P2P 네트워킹과 관련된 다양한 상태 정보가 포함된 개체를 반환
+// app.get('/getnetworkinfo', function(req,res){
+//     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
+//     const options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     }
+//     callback = (error, response, body) => {
+//         if(error) console.log(error);
+//         console.log('실행');
+//         if(!error && response.statusCode == 200){
+//             const data = JSON.parse(body); // Object로 나옴
+//             console.log("getnetworkinfo", data);
+//             res.render('getnetworkinfo',{
+//                 data : data.result,
+//                 title : ejs.render('title')
+//             });
+//             // res.send(data);
+//         }
+//     };
+//     request(options, callback);
+// });
+
+// //채굴 관련 정보를 포함하는 json 객체를 반환
+// app.get("/getmininginfo", (req, res) => {
+//     var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getmininginfo","params":[]}`;
+//     var options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     };
+
+//     callback = (error, response, body) => {
+//         if (!error && response.statusCode == 200) {
+//             const data = JSON.parse(body);
+//             console.log("getmininginfo", data);
+//             res.render('getmininginfo', {
+//                 data: data.result,
+//                 title : ejs.render('title')
+//             })
+//         }
+//     };
+//     request(options, callback);
+// });
+
+// //거래내역 리스트
+// //parmas:[] 면 최근 10개, "*" 20 100면 100~120
+// app.get("/listtransactions", (req, res) => {
+//     var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
+//     var options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     };
+
+//     callback = (error, response, body) => {
+//         if (!error && response.statusCode == 200) {
+//             const data = JSON.parse(body);
+//             console.log("listtransactions", data);
+//             res.render('listtransactions', {
+//                 data: data.result,
+//                 title : ejs.render('title')
+//             })
+//         }
+//     };
+//     request(options, callback);
+// });
+
+
+// 상세도가 0이면 블록 '해시'에 대해 16진 인코딩된 직렬화된 문자열을 반환
+// 상세도가 1이면 블록 '해시'에 대한 정보가 포함된 개체를 반환
+// 세부 정보가 2이면 블록 '해시'에 대한 정보와 각 트랜잭션에 대한 정보가 포함된 개체를 반환
+// app.get('/getblock', function(req,res){
+//     res.render('getblock',{
+//         data : "",
+//         title : ejs.render('title')
+//     });
+// });
+
+// app.post('/getblock', function(req,res){
+//     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${req.body.blockhash}"]}`;
+//     const options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     }
+//     callback = (error, response, body) => {
+//         if(error) console.log(error);
+//         console.log('실행');
+//         if(!error && response.statusCode == 200){
+//             const data = JSON.parse(body); // Object로 나옴
+//             console.log(data);
+//             res.render('getblock',{
+//                 data : data.result,
+//                 title : ejs.render('title')
+//             });
+//             // res.send(data);
+//         }
+//     };
+//     request(options, callback);
+// });
+
+
+// //지갑 정보
+// app.get("/getwalletinfo", (req, res) => {
+//     var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getwalletinfo","params":[]}`;
+//     var options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     };
+
+//     callback = (error, response, body) => {
+//         if (!error && response.statusCode == 200) {
+//             const data = JSON.parse(body);
+//             console.log("getwalletinfo", data);
+//             res.render('getwalletinfo', {
+//                 data: data.result,
+//                 title : ejs.render('title')
+//             })
+//         }
+//     };
+//     request(options, callback);
+// });
+
+// //지갑 리스트
+// app.get("/listwallets", (req, res) => {
+//     var dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listwallets","params":[]}`;
+//     var options = {
+//         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+//         method: "POST",
+//         headers: headers,
+//         body: dataString
+//     };
+
+//     callback = (error, response, body) => {
+//         if (!error && response.statusCode == 200) {
+//             const data = JSON.parse(body);
+//             console.log("listwallets", data);
+//             res.render('listwallets', {
+//                 data: data.result,
+//                 title : ejs.render('title')
+//             })
+//         }
+//     };
+//     request(options, callback);
+// });
 
 // 서버 연결 상태 확인
 server.listen(port, hostname, () => {

@@ -12,7 +12,7 @@
     /* background-color: #3e579b; */
     background-color: rgb(18, 29, 51);
     padding: 8px 12px;
-    border-bottom: 1px solid #eeee;
+    /* border-bottom: 1px solid #eeee; */
     font-size: 15px;
     line-height: 1.7;
 }
@@ -72,7 +72,7 @@
     font-size: 24px;
     color: #24c0eb;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 875px) {
     .navbar{
         flex-direction: column;
         align-items: flex-start;
