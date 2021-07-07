@@ -312,33 +312,20 @@ app.get('/block_interval', function (req, res, next) {
         body: dataString
     }
     callback = (error, response, body) => {
-        let time_sum = 0;
         if (error) console.log(error);
         if (!error && response.statusCode == 200) {
             const data = JSON.parse(body); // Object로 나옴
-            options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
-            callback1 = (error, response, body) => {
+            options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
+            callback = (error, response, body) => {
                 if (error) console.log(error);
                 if (!error && response.statusCode == 200) {
-                    const _data = JSON.parse(body);
-                    time_sum += _data.result[9].blocktime - _data.result[8].blocktime;
-                    _data.result[9].blocktime = Unix_timestamp(time_sum);
-                    options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
-                    callback2 = (error, response, body) => {
-                        if (error) console.log(error);
-                        if (!error && response.statusCode == 200) {
-                            const __data = JSON.parse(body);
-                            _data.result[9].blockcount = data.result.blocks;
-                            _data.result[9].connections = __data.result.connections;
-                            _data.result[9].difficulty = Math.round(data.result.difficulty * 100000)/100000;
-                            // console.log(_data.result);
-                            res.send(_data.result);
-                        }
-                    }
-                    request(options, callback2);
+                    const _data = JSON.parse(body); // Object로 나옴   
+                    data.result.difficulty = Math.round(data.result.difficulty * 100000)/100000 
+                    data.result.connections = _data.result.connections;
+                    res.send(data.result);
                 }
-            }
-            request(options, callback1);
+            };
+            request(options, callback);
         }
     };
     request(options, callback);
@@ -363,13 +350,6 @@ app.post('/search', function(req, res) {
     }
     request(options, callback);
 })
-
-
-
-app.get('/account/:address', function(req,res){
-    const address = req.params.address;
-    console.log(address);
-});
 
 // exchange 클릭시 mincho 거래소 ejs 렌더링
 app.get('/exchange', function(req,res){
