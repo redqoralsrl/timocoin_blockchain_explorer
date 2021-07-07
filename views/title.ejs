@@ -12,9 +12,12 @@
             <i class="fas fa-search search_i"></i>
             <input class="search" type="text" placeholder="Search blocks, transactions, hash...">
         </form>
+        <% if(userId == undefined) { %>
         <li><a href="/signin">Sign In</a></li>
         <li><a href="/signup">Sign Up</a></li>
-        <!-- <li><a href="#">Logout</a></li> -->
+        <% } else { %>
+        <li><a href="#">Logout</a></li>
+        <% } %>
     </ul>
     <a href="#" class="navbar__toogleBtn">
         <i class="fas fa-bars"></i>
