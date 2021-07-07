@@ -33,7 +33,7 @@ router.get('/', function(req,res) {
                     else res.send("<script language=\"javascript\">alert('[ ERROR ] :  Your balance is 0'); location.replace('/');</script>");
                 });
             }
-            else res.send("<script language=\"javascript\">alert('[ ERROR ] : No exist otrhers'); location.replace('/');</script>");
+            else res.send("<script language=\"javascript\">alert('[ ERROR ] : No exist others'); location.replace('/');</script>");
         });
     }
     else res.send("<script language=\"javascript\">alert('[ ERROR ] : Please Sign In'); location.replace('/signin');</script>");
