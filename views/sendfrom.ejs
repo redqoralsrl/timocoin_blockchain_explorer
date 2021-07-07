@@ -12,7 +12,7 @@
         <div class="myInfo">
             <li>
                 <b>USERNAME</b>
-                <span><%= userId %></span>
+                <span class="userId"><%= userId %></span>
             </li>
             <li>
                 <b>ADDRESS&nbsp;&nbsp;&nbsp;</b>
@@ -20,7 +20,7 @@
             </li>
             <li>
                 <b>BALANCE&nbsp;&nbsp;&nbsp;</b>
-                <span><%= balance %></span>
+                <span class="balance"></span>
             </li>
         </div>
         <div class="sendForm">
@@ -31,9 +31,11 @@
                     <% }) %>
                 </select>
                 <input type="text" name="coinCount" placeholder="coinCount" autocomplete="off"/>
-                <input type="submit" value="send"/>
+                <input type="submit" value="send" class="send"/>
             </form>
         </div>
     </div>
 </body>
+<script src="/javascripts/sendfrom.js"></script>
+<script src="/javascripts/jquery-3.5.1.min.js"></script>
 </html>

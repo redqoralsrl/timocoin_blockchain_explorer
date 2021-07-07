@@ -35,7 +35,7 @@ const hostname = '127.0.0.1'; // 로컬 호스트
 const port = 3001; // node.js 포트 설정
 
 // 블록체인 qt 설정
-const USER = "minki"; // 연결 아이디
+const USER = "kbpark"; // 연결 아이디
 const PASS = 1234; // 연결 비번
 const PORT = 9636;
 const ID_STRING = "minki"; // 해당 아이디 (로그인 시 그 아이디 적용)
