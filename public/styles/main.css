@@ -80,8 +80,8 @@ body{
     margin: 0 auto;
 }
 .hash_input{
-    margin: 0 auto;
-    background-color: hsla(0,0%,100%,.04);
+    margin: 43px auto;
+    background-color: hsla(0,0%,100%,.1);
     color: #fff;
     padding: 0 5rem 0 4rem;
     border-radius: 4px;
@@ -90,7 +90,8 @@ body{
     font-weight: 400;
     font-style: normal;
     height: 4rem;
-    width: 60%;
+    width: 70%;
+    border: none;
 }
 .hash_input::placeholder{
     font-size: 18px;
@@ -108,6 +109,7 @@ body{
     right: 6px;
     top: 6px;
     border-radius: 4px;
+    border: none;
     background-color: rgb(18, 29, 51);
     margin-bottom: 8px;
     cursor: pointer;

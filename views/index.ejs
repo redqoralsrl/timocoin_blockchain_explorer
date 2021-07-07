@@ -21,12 +21,13 @@
                     type: 'GET'
                 })
                 .done(function (result) {
+                    console.log(result);
                     $('.table_line').remove();
                     for (let i = 0; i < 10; i++) {
                         let rowHtml = `<div class="table_line"><div class="head0 body_t">${result.sort_list[i].blockheight}</div>`;
                         rowHtml += `<div class="head1 body_t body1"><a href="#"><div class="hash_resize">0x${result.sort_list[i].blockhash.substring(0, 3)}...${result.sort_list[i].blockhash.substring(result.sort_list[i].blockhash.length - 3, result.sort_list[i].blockhash.length)}</div></a></div>`;
                         rowHtml += `<div class="head2 body_t">${result.sort_list[i].mo_time}</div>`;
-                        rowHtml += `<div class="head3 body_t">${result.sort_list[i].vout[0].value}</div>`;
+                        rowHtml += `<div class="head3 body_t">${result.sort_list[i].amount}</div>`;
                         rowHtml += `<div class="head4 body_t"><div class="hash_resize address_resize">0x${result.sort_list[i].vout[0].scriptPubKey.addresses[0].substring(0, 3)}...${result.sort_list[i].vout[0].scriptPubKey.addresses[0].substring(result.sort_list[i].vout[0].scriptPubKey.addresses[0].length - 3, result.sort_list[i].vout[0].scriptPubKey.addresses[0].length)}</div></div>`;
                         rowHtml += `</div>`;
                         $(".table_tbody").append(rowHtml);
@@ -78,7 +79,7 @@
                     <div class="search_box">
                         <form action="/search" method="POST">
                             <div class="form_input">
-                                <input type="text" class="hash_input" name="block_num" placeholder="Search your transaction, an address or a block">
+                                <input type="text" class="hash_input" name="block_num" placeholder="Search by Block#">
                                 <button type="submit" class="hash_button"><i class="fas fa-search"></i></button>
                             </div>
                         </form>

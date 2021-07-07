@@ -140,7 +140,6 @@ app.get('/', function(req,res,next){
         if(error) console.log(error);
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
-            // data.result[0].blockheight = 1;  //이런식으로 블록height 넣어주자!
             for(let i = 9; i > 0; i--){
                 time_sum += data.result[i].blocktime - data.result[i-1].blocktime;
             }
@@ -159,21 +158,10 @@ app.get('/', function(req, res, next){
         getblockchaininfo : req.datas[0].result,
         getnetworkinfo : req.datas[1].result,
         getmininginfo : req.datas[2].result,
-        // listtransactions : req.datas[3].result,
         difficulty : Math.round(req.datas[0].result.difficulty * 100000)/100000,
-        // blocktime: Unix_timestamp(req.blocktime),
         moment: moment
-        // transaction: undefined,
     });
 });
-// options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${data.result}]}`;
-//             callback1 = (error, response, body) => {
-//                 if (error) console.log(error);
-//                 if (!error && response.statusCode == 200) {
-//                     const _data = JSON.parse(body);
-//                 }
-//             }
-//             request(options, callback1);
 app.get('/block_transaction', function (req, res, next) {
     const list = [];
     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockcount","params":[]}`;
@@ -204,13 +192,15 @@ app.get('/block_transaction', function (req, res, next) {
                             if (error) console.log(error);
                             if (!error && response.statusCode == 200) {
                                 data = JSON.parse(body);
-                                options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getrawtransaction","params":["${data.result.tx[0]}", true]}`;
+                                // data.result.tx
+                                options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getrawtransaction","params":["${data.result.tx[data.result.tx.length-1]}", true]}`;
                                 callback3 = (error, response, body) => {
                                     if (error) console.log(error);
                                     if (!error && response.statusCode == 200) {
                                         data = JSON.parse(body);
                                         data.result.mo_time = moment(Unix_timestamp_lower(data.result.blocktime)).startOf('sec').fromNow();
                                         data.result.blockheight = i;
+                                        data.result.amount = data.result.vout[0].value > data.result.vout[1].value ? data.result.vout[0].value : data.result.vout[1].value;
                                         list.push(data.result);
                                         if(i == num) {
                                             let sort_list;
@@ -293,7 +283,7 @@ app.post('/search', function(req, res) {
                         if (error) console.log(error);
                         if (!error && response.statusCode == 200) {
                             data = JSON.parse(body);
-                            search_result.amount = data.result.vout[0].value;
+                            search_result.amount = data.result.vout[0].value > data.result.vout[1].value ? data.result.vout[0].value : data.result.vout[1].value;
                             res.render('search',{
                                 block_info : search_result,
                                 title : ejs.render('title'),
@@ -317,7 +307,6 @@ app.get('/exchange', function(req,res){
         logined : req.session.logined,
     });
 });
-
 
 // 서버 연결 상태 확인
 server.listen(port, hostname, () => {
