@@ -1,0 +1,85 @@
+body {
+    background-color: #ffffff;
+    color: #ffffff;
+}
+
+/* .bg {
+    background: url();
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    opacity: 0.8;
+} */
+
+.sign > h1 {
+    color: #EEA422;
+    margin: 20px 20px;
+}
+
+.sign {
+    background-color: #121D33;
+    width: 400px;
+    position: absolute;
+    padding: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border-top-left-radius: 100px;
+    border-bottom-right-radius: 100px;
+}
+
+.sign input[type="text"], .sign input[type="password"] {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 10px;
+    width: 250px;
+    background: none;
+    outline: none;
+    border: 2px solid #ffffff;
+    /* border: none; */
+    /* border: 2px solid black; */
+    border-radius: 15px;
+    transition: 0.8s;
+    color: #ffffff;
+}
+::placeholder {
+    color: #ffffff;
+}
+
+.sign input[type="text"]:focus, .sign input[type="password"]:focus {
+    border-left: 30px solid #EEA422;
+    color: #ffffff;
+}
+
+.sign input[type="submit"] {
+    color: #ffffff;
+    background: none;
+    border: 2px solid #ffffff;
+    padding: 10px 10px;
+    width: 100px;
+    margin: 10px 10px;
+    border-radius: 15px;
+    transition: 0.6s;
+}
+
+.sign input[type="submit"]:hover {
+    color: #ffffff;
+    border: 2px solid #EEA422;
+    background-color: #EEA422;
+}
+
+p {
+    margin: 20px 30px 0 0;
+    text-align: right;
+}
+a {
+    text-decoration: none;
+    color: #EEA422;
+    transition: 0.5s;
+}
+a:hover {
+    color: #EEA422;
+    font-weight: 600;
+    font-size: larger;
+}

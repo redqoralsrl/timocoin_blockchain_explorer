@@ -27,6 +27,7 @@ const signinRouter = require('./routers/signin');
 // app.use('/', indexRouter);
 app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
+app.use('/sendfrom', sendfromRouter);
 
 // 호스트와 포트 설정
 const hostname = '127.0.0.1'; // 로컬 호스트

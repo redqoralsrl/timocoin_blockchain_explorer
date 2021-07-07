@@ -9,11 +9,11 @@ router.use(session);
 
 router.get('/', function(req,res) {
     if(req.session.userId != undefined) {
-        res.send("<script language=\"javascript\">alert('[ ERROR ] : Already Login'); location.replace('/index');</script>");
+        res.send("<script language=\"javascript\">alert('[ ERROR ] : Already Login'); location.replace('/');</script>");
     }
     else {
         res.render('signin',{
-            title : ejs.render('title'),
+            title: ejs.render('title'),
         });
     }
 });

@@ -6,10 +6,10 @@ const session = require('./session');
 const crypto = require('crypto');
 const request = require('request');
 
-const USER = process.env.RPC_USER; // conf파일에 적은 rpcuser
-const PASS = process.env.RPC_PASSWORD; // conf파일에 적은 rpcpass
-const PORT = 9636; // 코인 만들때 지정해둔 포트 (rpcport)
-const ID_STRING = "TimoCoin"; // 의미 없는 스트링
+const USER = process.env.RPC_USER;
+const PASS = process.env.RPC_PASSWORD;
+const PORT = 9636;
+const ID_STRING = "TimoCoin";
 const headers = {
   "content-type": "text/plain;"
 };
@@ -18,11 +18,11 @@ router.use(session);
 
 router.get('/', function(req,res) {
     if(req.session.userId != undefined) {
-        res.send("<script language=\"javascript\">alert('[ ERROR ] : Already Login'); location.replace('/index');</script>");
+        res.send("<script language=\"javascript\">alert('[ ERROR ] : Already Login'); location.replace('/');</script>");
     }
     else {
         res.render('signup',{
-            title : ejs.render('title'),
+            title: ejs.render('title'),
         });
     }
 });
