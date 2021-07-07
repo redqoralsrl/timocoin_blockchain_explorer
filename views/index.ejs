@@ -76,7 +76,7 @@
                 </div>
                 <div class="Main_page">
                     <div class="search_box">
-                        <form action="/search">
+                        <form action="/search" method="POST">
                             <div class="form_input">
                                 <input type="text" class="hash_input" name="block_num" placeholder="Search your transaction, an address or a block">
                                 <button type="submit" class="hash_button"><i class="fas fa-search"></i></button>
@@ -107,8 +107,7 @@
                                 </div>
                                 <div class="nework_indicator_box">
                                     <div class="avg_block">
-                                        <h3><span>3.50m</span></h3>
-                                        <!-- <h3><span><%= blocktime %></span></h3> -->
+                                        <h3><span>...</span></h3>
                                         <h6>Avg Block Time
                                             <br>(recent 10 blocks)</h6>
                                     </div>
