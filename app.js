@@ -305,10 +305,7 @@ app.post('/search', function(req, res) {
                             console.log('결과', search_result);
                             res.render('search',{
                                 block_info : search_result,
-                                title : ejs.render('title', {
-                                    userId: req.session.userId,
-                                    logined : req.session.logined,
-                                })
+                                title : ejs.render('title')
                             })
                         }
                     }
