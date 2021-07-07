@@ -6,14 +6,12 @@
     </div>
     <ul class="navbar_menu">
         <li><a href="/sendfrom">send</a></li>
-        <li><a href="#">wallet</a></li>
         <li><a href="/exchange">exchange</a></li>
-        <li><a href="#">explorer</a></li>
-        <form class="search_form">
-            <i class="fas fa-search search_i"></i>
-            <input class="search" type="text" placeholder="Search blocks, transactions, hash...">
+        <form class="search_form" action="/search" method="POST">
+            <button type="submit" class="su"><i class="fas fa-search search_i"></i></button>
+            <input class="search" type="text" name="block_num" placeholder="Search your transaction, an address or a block">
         </form>
-        <% if(userId == undefined) { %>
+        <% if(logined == undefined) { %>
         <li><a href="/signin">Sign In</a></li>
         <li><a href="/signup">Sign Up</a></li>
         <% } else { %>

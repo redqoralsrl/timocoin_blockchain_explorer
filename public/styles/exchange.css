@@ -4,7 +4,7 @@
 }
 .exchange_container{
     /* background: rgb(39, 39, 109); */
-    background: rgb(69 150 162);
+    background: #4564b9;
     color: #fff;
 }
 .com{
@@ -57,7 +57,7 @@
 }
 .left a input:hover{
     cursor: pointer;
-    background: #4564b9;
+    background: #464d5e;
 }
 .com img{
     height: 30rem;

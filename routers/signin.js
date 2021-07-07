@@ -33,7 +33,6 @@ router.post('/', function(req, res) {
                 req.session.addr = result[0].addr;
                 req.session.logined = true;
                 req.session.save();
-                console.log(req.session);
                 res.redirect('/');
             }
             else

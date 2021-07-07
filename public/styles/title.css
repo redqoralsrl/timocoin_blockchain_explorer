@@ -16,6 +16,13 @@
     font-size: 15px;
     line-height: 1.7;
 }
+.su{
+    background-color: transparent;
+    color: #eee;
+    border: none;
+    padding: 5px;
+    height: 100%;
+}
 .navbar_logo img{
     height: 60px;
 }
