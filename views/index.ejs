@@ -20,43 +20,46 @@
                     dataType: 'json',
                     type: 'GET'
                 })
-                    .done(function (result) {
-                        $('.table_line').remove();
-                        for (let i = 9; i >= 0; i--) {
-                            let rowHtml = `<div class="table_line"><div class="head0 body_t">${result[i].height}</div>`;
-                            rowHtml += `<div class="head1 body_t body1"><a href="#"><div class="hash_resize">0x${result[i].blockhash.substring(0, 3)}...${result[i].blockhash.substring(result[i].blockhash.length - 3, result[i].blockhash.length)}</div></a></div>`;
-                            rowHtml += `<div class="head2 body_t">${result[i].blocktime}</div>`;
-                            rowHtml += `<div class="head3 body_t">${result[i].amount}</div>`;
-                            rowHtml += `<div class="head4 body_t"><a href="#"><div class="hash_resize address_resize">0x${result[i].address.substring(0, 3)}...${result[i].address.substring(result[i].address.length - 3, result[i].address.length)}</div></a></div>`;
-                            rowHtml += `</div>`;
-                            $(".table_tbody").append(rowHtml);
-                        }
-                    });
+                .done(function (result) {
+                    $('.table_line').remove();
+                    for (let i = 0; i < 10; i++) {
+                        let rowHtml = `<div class="table_line"><div class="head0 body_t">${result.sort_list[i].blockheight}</div>`;
+                        rowHtml += `<div class="head1 body_t body1"><a href="#"><div class="hash_resize">0x${result.sort_list[i].blockhash.substring(0, 3)}...${result.sort_list[i].blockhash.substring(result.sort_list[i].blockhash.length - 3, result.sort_list[i].blockhash.length)}</div></a></div>`;
+                        rowHtml += `<div class="head2 body_t">${result.sort_list[i].mo_time}</div>`;
+                        rowHtml += `<div class="head3 body_t">${result.sort_list[i].vout[0].value}</div>`;
+                        rowHtml += `<div class="head4 body_t"><a href="/account/${result.sort_list[i].vout[0].scriptPubKey.addresses[0]}"><div class="hash_resize address_resize">0x${result.sort_list[i].vout[0].scriptPubKey.addresses[0].substring(0, 3)}...${result.sort_list[i].vout[0].scriptPubKey.addresses[0].substring(result.sort_list[i].vout[0].scriptPubKey.addresses[0].length - 3, result.sort_list[i].vout[0].scriptPubKey.addresses[0].length)}</div></a></div>`;
+                        rowHtml += `</div>`;
+                        $(".table_tbody").append(rowHtml);
+                    }
+                    $(".avg_block > h3 > span").remove();
+                    let rowHtml2 = `<span>${result.avg_time}</span>`;
+                    $(".avg_block > h3").append(rowHtml2);
+                });
             }, 1000);
-            setInterval(()=>{
-                $.ajax({
-                    url: '/block_interval',
-                    dataType: 'json',
-                    type: 'GET'
-                })
-                    .done(function(result){
-                        $(".blockheight_view > span").remove();
-                        let rowHtml1 = `<span>${result[9].blockcount}</span>`;
-                        $(".blockheight_view").append(rowHtml1);
+            // setInterval(()=>{
+            //     $.ajax({
+            //         url: '/block_interval',
+            //         dataType: 'json',
+            //         type: 'GET'
+            //     })
+            //         .done(function(result){
+            //             $(".blockheight_view > span").remove();
+            //             let rowHtml1 = `<span>${result[9].blockcount}</span>`;
+            //             $(".blockheight_view").append(rowHtml1);
 
-                        $(".avg_block > h3 > span").remove();
-                        let rowHtml2 = `<span>${result[9].blocktime}</span>`;
-                        $(".avg_block > h3").append(rowHtml2);
+            //             // $(".avg_block > h3 > span").remove();
+            //             // let rowHtml2 = `<span>${result[9].blocktime}</span>`;
+            //             // $(".avg_block > h3").append(rowHtml2);
 
-                        $(".network_connect > h3 > span").remove();
-                        let rowHtml3 = `<span>${result[9].connections}</span>`;
-                        $(".network_connect > h3").append(rowHtml3);
+            //             $(".network_connect > h3 > span").remove();
+            //             let rowHtml3 = `<span>${result[9].connections}</span>`;
+            //             $(".network_connect > h3").append(rowHtml3);
 
-                        $(".network_difficulty > h4 > span").remove();
-                        let rowHtml4 = `<span>${result[9].difficulty}</span>`;
-                        $(".network_difficulty > h4").append(rowHtml4);
-                    });
-            }, 1000);
+            //             $(".network_difficulty > h4 > span").remove();
+            //             let rowHtml4 = `<span>${result[9].difficulty}</span>`;
+            //             $(".network_difficulty > h4").append(rowHtml4);
+            //         });
+            // }, 1000);
 
         })
     </script>
@@ -73,9 +76,9 @@
                 </div>
                 <div class="Main_page">
                     <div class="search_box">
-                        <form action="#">
+                        <form action="/search">
                             <div class="form_input">
-                                <input type="text" class="hash_input" placeholder="Search your transaction, an address or a block">
+                                <input type="text" class="hash_input" name="block_num" placeholder="Search your transaction, an address or a block">
                                 <button type="submit" class="hash_button"><i class="fas fa-search"></i></button>
                             </div>
                         </form>
@@ -104,7 +107,8 @@
                                 </div>
                                 <div class="nework_indicator_box">
                                     <div class="avg_block">
-                                        <h3><span><%= blocktime %></span></h3>
+                                        <h3><span>3.50m</span></h3>
+                                        <!-- <h3><span><%= blocktime %></span></h3> -->
                                         <h6>Avg Block Time
                                             <br>(recent 10 blocks)</h6>
                                     </div>

@@ -224,6 +224,7 @@ body{
     vertical-align: middle;
 }
 .head_t{
+    margin-right: -6px;
     font-weight: 400;
     color: rgba(132,171,255,.7);
     display: inline-block;
@@ -243,7 +244,7 @@ body{
     width: 24%;
 }
 .head2{
-    width: 14%;
+    width: 16%;
 }
 .head3{
     width: 14%;
@@ -296,5 +297,5 @@ body{
     transform: translateY(-50%);
 }
 .address_resize{
-    width: 120px;
+    width: 140px;
 }

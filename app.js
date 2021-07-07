@@ -6,9 +6,10 @@ const ejs = require('ejs'); // ejs 사용
 const request = require('request'); // 요청데이터 처리
 const dotenv = require("dotenv"); // 환경변수 .env사용
 const session = require('./routers/session'); // 세션 설정
+const moment = require('moment');
 
 dotenv.config(); //  dotenv 적용
-
+// moment.locale('ko'); //moment 한국어
 
 // express 연결
 const app = express();
@@ -49,18 +50,23 @@ app.use(express.static(path.join(__dirname, 'public'))); // public 폴더 설정
 function Unix_timestamp(t){
     t = Number(t);
     var date = new Date(t*1000);
-    // var year = date.getFullYear();
-    // var month = "0" + (date.getMonth()+1);
-    // var day = "0" + date.getDate();
-    // var hour = "0" + date.getHours();
-    // var minute = "0" + date.getMinutes();
-    // var second = "0" + date.getSeconds();
-    // return hour.substr(-2) + ":" + minute.substr(-2) + ":" + second.substr(-2);
     var hour = date.getHours()-9;
     var minute = date.getMinutes();
     var second = date.getSeconds();
     return hour == 0 ? minute == 0 ? second + 's' : minute + '.' + second + 'm' : hour + '.' + minute + 'h';
     // return hour + ":" + minute + ":" + second;
+}
+
+function Unix_timestamp_lower(t){
+    t = Number(t);
+    var date = new Date(t*1000);
+    var year = date.getFullYear();
+    var month = "0" + (date.getMonth()+1);
+    var day = "0" + date.getDate();
+    var hour = "0" + date.getHours();
+    var minute = "0" + date.getMinutes();
+    var second = "0" + date.getSeconds();
+    return year + "-" + month.substr(-2) + "-" + day.substr(-2) + " " + hour.substr(-2) + ":" + minute.substr(-2) + ":" + second.substr(-2);
 }
 
 // 처음 시작시 렌더링 되는 곳
@@ -143,6 +149,66 @@ app.get('/', function(req,res,next){
         }
     };
     request(options, callback);
+    // const list = [];
+    // const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockcount","params":[]}`;
+    // let options = {
+    //     url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+    //     method: "POST",
+    //     headers: headers,
+    //     body: dataString
+    // }
+    // callback = (error, response, body) => {
+    //     if (error) console.log(error);
+    //     if (!error && response.statusCode == 200) {
+    //         let data = JSON.parse(body);
+    //         const num = Number(data.result)-19;
+    //         // list.push(data.result);
+    //         // data.result => 1351
+    //         // for문 위치
+    //         let result_num = Number(data.result);
+    //         for(let i = result_num; i > result_num-20; i--){
+    //             options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${i}]}`;
+    //             callback1 = (error, response, body) => {
+    //                 if (error) console.log(error);
+    //                 if (!error && response.statusCode == 200) {
+    //                     data = JSON.parse(body);
+    //                     // _data.result => blockhash
+    //                     options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${data.result}"]}`;
+    //                     callback2 = (error, response, body) => {
+    //                         if (error) console.log(error);
+    //                         if (!error && response.statusCode == 200) {
+    //                             data = JSON.parse(body);
+    //                             // console.log(i,' : ',data);
+    //                             // data.result.tx
+    //                             options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getrawtransaction","params":["${data.result.tx[0]}", true]}`;
+    //                             callback3 = (error, response, body) => {
+    //                                 if (error) console.log(error);
+    //                                 if (!error && response.statusCode == 200) {
+    //                                     data = JSON.parse(body);
+    //                                     data.result.blocktime = Unix_timestamp_lower(data.result.blocktime);
+    //                                     // data.result.blocktime = moment(data.result.blocktime).startOf('sec').fromNow()
+    //                                     data.result.blockheight = i;
+    //                                     list.push(data.result);
+    //                                     if(i == num) {
+    //                                         let sort_list;
+    //                                         sort_list = list.sort((a,b) => {
+    //                                             return b.blockheight - a.blockheight;
+    //                                         })
+    //                                         res.send(sort_list);
+    //                                     }
+    //                                 }
+    //                             }
+    //                             request(options, callback3);
+    //                         }
+    //                     }
+    //                     request(options, callback2);
+    //                 }
+    //             }
+    //             request(options, callback1);
+    //         }
+    //     }
+    // }
+    // request(options, callback);
 });
 app.get('/', function(req, res, next){
     res.render('index',{
@@ -155,13 +221,21 @@ app.get('/', function(req, res, next){
         listtransactions : req.datas[3].result,
         difficulty : Math.round(req.datas[0].result.difficulty * 100000)/100000,
         blocktime: Unix_timestamp(req.blocktime),
+        moment: moment
         // transaction: undefined,
     });
 });
-
-app.get('/block_transaction', function(req, res, next){
-    const da = [];
-    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
+// options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${data.result}]}`;
+//             callback1 = (error, response, body) => {
+//                 if (error) console.log(error);
+//                 if (!error && response.statusCode == 200) {
+//                     const _data = JSON.parse(body);
+//                 }
+//             }
+//             request(options, callback1);
+app.get('/block_transaction', function (req, res, next) {
+    const list = [];
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockcount","params":[]}`;
     let options = {
         url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
         method: "POST",
@@ -169,27 +243,63 @@ app.get('/block_transaction', function(req, res, next){
         body: dataString
     }
     callback = (error, response, body) => {
-        if(error) console.log(error);
-        if(!error && response.statusCode == 200){
-            const data = JSON.parse(body); // Object로 나옴
-            for(let i = 0; i < 10; i++){
-                options.body =  `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${data.result[i].blockhash}"]}`;
+        if (error) console.log(error);
+        if (!error && response.statusCode == 200) {
+            let data = JSON.parse(body);
+            const num = Number(data.result)-19;
+            // list.push(data.result);
+            // data.result => 1351
+            // for문 위치
+            let result_num = Number(data.result);
+            for(let i = result_num; i > result_num-20; i--){
+                options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${i}]}`;
                 callback1 = (error, response, body) => {
-                    if(error) console.log(error);
-                    if(!error && response.statusCode == 200){
-                        const _data = JSON.parse(body);
-                        data.result[i].height = _data.result.height;
-                        // console.log('속에거', data);
-                        if(i == 9){
-                            res.send(data.result);
+                    if (error) console.log(error);
+                    if (!error && response.statusCode == 200) {
+                        data = JSON.parse(body);
+                        // _data.result => blockhash
+                        options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${data.result}"]}`;
+                        callback2 = (error, response, body) => {
+                            if (error) console.log(error);
+                            if (!error && response.statusCode == 200) {
+                                data = JSON.parse(body);
+                                // console.log(i,' : ',data);
+                                // data.result.tx
+                                options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getrawtransaction","params":["${data.result.tx[0]}", true]}`;
+                                callback3 = (error, response, body) => {
+                                    if (error) console.log(error);
+                                    if (!error && response.statusCode == 200) {
+                                        data = JSON.parse(body);
+                                        // console.log(data.result);
+                                        // data.result.blocktime = Unix_timestamp_lower(data.result.blocktime)
+                                        data.result.mo_time = moment(Unix_timestamp_lower(data.result.blocktime)).startOf('sec').fromNow();
+                                        // data.result.blocktime = moment(data.result.blocktime).startOf('sec').fromNow()
+                                        data.result.blockheight = i;
+                                        list.push(data.result);
+                                        if(i == num) {
+                                            let sort_list;
+                                            sort_list = list.sort((a,b) => {
+                                                return b.blockheight - a.blockheight;
+                                            })
+                                            let sum = 0;
+                                            for(let i = 0; i< 9; i++) {  
+                                                if(sort_list[i+1] != undefined) sum += Number(sort_list[i].blocktime) - Number(sort_list[i+1].blocktime);
+                                            }
+                                            avg_time = Unix_timestamp(sum/10);
+                                            res.send({sort_list, avg_time});
+                                        }
+                                    }
+                                }
+                                request(options, callback3);
+                            }
                         }
+                        request(options, callback2);
                     }
                 }
                 request(options, callback1);
             }
-            // next();
         }
-    };
+    }
     request(options, callback);
 });
 
@@ -212,13 +322,13 @@ app.get('/block_interval', function (req, res, next) {
                 if (!error && response.statusCode == 200) {
                     const _data = JSON.parse(body);
                     time_sum += _data.result[9].blocktime - _data.result[8].blocktime;
-                    _data.result[9].blockcount = data.result.blocks;
                     _data.result[9].blocktime = Unix_timestamp(time_sum);
                     options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
                     callback2 = (error, response, body) => {
                         if (error) console.log(error);
                         if (!error && response.statusCode == 200) {
                             const __data = JSON.parse(body);
+                            _data.result[9].blockcount = data.result.blocks;
                             _data.result[9].connections = __data.result.connections;
                             _data.result[9].difficulty = Math.round(data.result.difficulty * 100000)/100000;
                             // console.log(_data.result);
@@ -234,15 +344,32 @@ app.get('/block_interval', function (req, res, next) {
     request(options, callback);
 });
 
+////////////검색///////////////
+app.post('/search', function(req, res) {
+    const blocknum = req.body.block_num;
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${blocknum}]}`;
+    let options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    }
+    callback = (error, response, body) => {
+        if (error) console.log(error);
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body); // Object로 나옴
+            console.log('검색', data);
+        }
+    }
+    request(options, callback);
+})
 
 
 
-
-
-
-
-
-
+app.get('/account/:address', function(req,res){
+    const address = req.params.address;
+    console.log(address);
+});
 
 // exchange 클릭시 mincho 거래소 ejs 렌더링
 app.get('/exchange', function(req,res){
