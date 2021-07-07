@@ -23,6 +23,8 @@ router.get('/', function(req,res) {
     else {
         res.render('signup',{
             title: ejs.render('title'),
+            userId: req.session.userId,
+            logined : req.session.logined,
         });
     }
 });

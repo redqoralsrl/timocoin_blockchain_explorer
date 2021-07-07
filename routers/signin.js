@@ -14,6 +14,8 @@ router.get('/', function(req,res) {
     else {
         res.render('signin',{
             title: ejs.render('title'),
+            userId: req.session.userId,
+            logined : req.session.logined,
         });
     }
 });
