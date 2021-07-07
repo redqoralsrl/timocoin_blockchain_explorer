@@ -75,7 +75,6 @@ app.get('/', function(req,res,next){
     }
     callback = (error, response, body) => {
         if(error) console.log(error);
-        console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
             da.push(data);
@@ -95,7 +94,6 @@ app.get('/', function(req,res,next){
     }
     callback = (error, response, body) => {
         if(error) console.log(error);
-        console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
             req.datas.push(data);
@@ -114,7 +112,6 @@ app.get('/', function(req,res,next){
     }
     callback = (error, response, body) => {
         if(error) console.log(error);
-        console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
             req.datas.push(data);
@@ -134,11 +131,9 @@ app.get('/', function(req,res,next){
     }
     callback = (error, response, body) => {
         if(error) console.log(error);
-        console.log('실행');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
             // data.result[0].blockheight = 1;  //이런식으로 블록height 넣어주자!
-            console.log('listtransactions', data.result[0]);
             for(let i = 9; i > 0; i--){
                 time_sum += data.result[i].blocktime - data.result[i-1].blocktime;
             }
@@ -160,7 +155,7 @@ app.get('/', function(req, res, next){
         listtransactions : req.datas[3].result,
         difficulty : Math.round(req.datas[0].result.difficulty * 100000)/100000,
         blocktime: Unix_timestamp(req.blocktime),
-        transaction: undefined,
+        // transaction: undefined,
     });
 });
 
@@ -175,7 +170,6 @@ app.get('/block_transaction', function(req, res, next){
     }
     callback = (error, response, body) => {
         if(error) console.log(error);
-        console.log('ajax');
         if(!error && response.statusCode == 200){
             const data = JSON.parse(body); // Object로 나옴
             for(let i = 0; i < 10; i++){
@@ -198,9 +192,47 @@ app.get('/block_transaction', function(req, res, next){
     };
     request(options, callback);
 });
-// app.get('/block_transaction', function(req, res, next){
-    
-// });
+
+app.get('/block_interval', function (req, res, next) {
+    const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getmininginfo","params":[]}`;
+    let options = {
+        url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+        method: "POST",
+        headers: headers,
+        body: dataString
+    }
+    callback = (error, response, body) => {
+        let time_sum = 0;
+        if (error) console.log(error);
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body); // Object로 나옴
+            options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"listtransactions","params":[]}`;
+            callback1 = (error, response, body) => {
+                if (error) console.log(error);
+                if (!error && response.statusCode == 200) {
+                    const _data = JSON.parse(body);
+                    time_sum += _data.result[9].blocktime - _data.result[8].blocktime;
+                    _data.result[9].blockcount = data.result.blocks;
+                    _data.result[9].blocktime = Unix_timestamp(time_sum);
+                    options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getnetworkinfo","params":[]}`;
+                    callback2 = (error, response, body) => {
+                        if (error) console.log(error);
+                        if (!error && response.statusCode == 200) {
+                            const __data = JSON.parse(body);
+                            _data.result[9].connections = __data.result.connections;
+                            _data.result[9].difficulty = Math.round(data.result.difficulty * 100000)/100000;
+                            // console.log(_data.result);
+                            res.send(_data.result);
+                        }
+                    }
+                    request(options, callback2);
+                }
+            }
+            request(options, callback1);
+        }
+    };
+    request(options, callback);
+});
 
 
 

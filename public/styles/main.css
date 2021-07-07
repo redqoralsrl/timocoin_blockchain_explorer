@@ -35,13 +35,31 @@ body{
     display: inline-block;
     position: relative;
     float: right;
-    width: 100px;
+    width: 150px;
     padding: 10px 10px;
     border: 1px solid rgba(255, 255, 255, 0.164);
     border-radius: 10rem;
     transition: border-color .1s ease-in;
     text-align:center;
     cursor: pointer;
+}
+.networks_main i{
+    margin-right: 15px;
+    -webkit-animation:blink 1.5s ease-in-out infinite alternate;
+    -moz-animation:blink 1.5s ease-in-out infinite alternate;
+    animation:blink 1.5s ease-in-out infinite alternate;
+}
+@-webkit-keyframes blink{
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+@-moz-keyframes blink{
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+@keyframes blink{
+    0% {opacity:0;}
+    100% {opacity:1;}
 }
 .networks_main:hover{
     border: 1px solid #fff;
@@ -106,6 +124,7 @@ body{
     position: relative;
     width: 100%;
     margin-bottom: 15px;
+    height: 240px;
 }
 .blockheight_indicator{
     width: 25%;
@@ -172,7 +191,7 @@ body{
 
 /* 민기 */
 .transactions{
-    width: 98%;
+    width: 1180px;
     margin: 0 auto;
 }
 .ts_box{
@@ -250,7 +269,7 @@ body{
     display: inline-block;
     height: 100%;
     line-height: 45px;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     letter-spacing: .4px;
     vertical-align: middle;
     font-size: 12px;

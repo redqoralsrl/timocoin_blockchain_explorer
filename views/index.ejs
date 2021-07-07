@@ -24,15 +24,39 @@
                         $('.table_line').remove();
                         for (let i = 9; i >= 0; i--) {
                             let rowHtml = `<div class="table_line"><div class="head0 body_t">${result[i].height}</div>`;
-                            rowHtml += `<div class="head1 body_t"><div class="hash_resize">0x${result[i].blockhash.substring(0, 3)}...${result[i].blockhash.substring(result[i].blockhash.length - 3, result[i].blockhash.length)}</div></div>`;
+                            rowHtml += `<div class="head1 body_t body1"><a href="#"><div class="hash_resize">0x${result[i].blockhash.substring(0, 3)}...${result[i].blockhash.substring(result[i].blockhash.length - 3, result[i].blockhash.length)}</div></a></div>`;
                             rowHtml += `<div class="head2 body_t">${result[i].blocktime}</div>`;
                             rowHtml += `<div class="head3 body_t">${result[i].amount}</div>`;
-                            rowHtml += `<div class="head4 body_t"><div class="hash_resize address_resize">${result[i].address.substring(0, 3)}...${result[i].address.substring(result[i].address.length - 3, result[i].address.length)}</div></div>`;
+                            rowHtml += `<div class="head4 body_t"><a href="#"><div class="hash_resize address_resize">0x${result[i].address.substring(0, 3)}...${result[i].address.substring(result[i].address.length - 3, result[i].address.length)}</div></a></div>`;
                             rowHtml += `</div>`;
                             $(".table_tbody").append(rowHtml);
                         }
-                    })
-            }, 1000)
+                    });
+            }, 1000);
+            setInterval(()=>{
+                $.ajax({
+                    url: '/block_interval',
+                    dataType: 'json',
+                    type: 'GET'
+                })
+                    .done(function(result){
+                        $(".blockheight_view > span").remove();
+                        let rowHtml1 = `<span>${result[9].blockcount}</span>`;
+                        $(".blockheight_view").append(rowHtml1);
+
+                        $(".avg_block > h3 > span").remove();
+                        let rowHtml2 = `<span>${result[9].blocktime}</span>`;
+                        $(".avg_block > h3").append(rowHtml2);
+
+                        $(".network_connect > h3 > span").remove();
+                        let rowHtml3 = `<span>${result[9].connections}</span>`;
+                        $(".network_connect > h3").append(rowHtml3);
+
+                        $(".network_difficulty > h4 > span").remove();
+                        let rowHtml4 = `<span>${result[9].difficulty}</span>`;
+                        $(".network_difficulty > h4").append(rowHtml4);
+                    });
+            }, 1000);
 
         })
     </script>
@@ -44,7 +68,7 @@
             <div class="container">
                 <div class="networks">
                     <div class="networks_main">
-                        <%= getblockchaininfo.chain %> network
+                        <i class="fas fa-wifi"></i><%= getblockchaininfo.chain %> network
                     </div>
                 </div>
                 <div class="Main_page">
@@ -60,7 +84,7 @@
                         <div class="blockheight_indicator">
                             <h4 class="mainbox_title">Block Height</h4>
                             <div class="blockheight_view">
-                                <i class="fab fa-hive"></i> <%= getblockchaininfo.blocks%>
+                                <i class="fab fa-hive"></i> <span><%= getblockchaininfo.blocks%></span>
                             </div>
                         </div>
                         <div class="network_indicator">
@@ -68,19 +92,19 @@
                             <div class="network_boxes">
                                 <div class="nework_indicator_box">
                                     <div>
-                                        <h3><%= getnetworkinfo.connections %></h3>
+                                        <h3 class="network_connect"><span><%= getnetworkinfo.connections %></span></h3>
                                         <h6>Consensus Nodes</h6>
                                     </div>
                                 </div>
                                 <div class="nework_indicator_box">
-                                    <div>
-                                        <h4><%= difficulty %></h4>
+                                    <div class="network_difficulty">
+                                        <h4><span><%= difficulty %></span></h4>
                                         <h6>Difficulty</h6>
                                     </div>
                                 </div>
                                 <div class="nework_indicator_box">
-                                    <div>
-                                        <h3><%= blocktime %></h3>
+                                    <div class="avg_block">
+                                        <h3><span><%= blocktime %></span></h3>
                                         <h6>Avg Block Time
                                             <br>(recent 10 blocks)</h6>
                                     </div>
