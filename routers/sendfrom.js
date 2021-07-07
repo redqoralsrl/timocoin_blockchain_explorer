@@ -27,11 +27,6 @@ router.get('/', function(req,res) {
                             addr: result2[0].addr,
                         });
                 });
-<<<<<<< HEAD
-            // }
-            // else res.send("<script language=\"javascript\">alert('[ ERROR ] : No exist others'); location.replace('/');</script>");
-=======
->>>>>>> origin/yuyu
         });
     }
     else res.send("<script language=\"javascript\">alert('[ ERROR ] : Please Sign In'); location.replace('/signin');</script>");
