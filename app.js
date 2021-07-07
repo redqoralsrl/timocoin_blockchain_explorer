@@ -149,66 +149,6 @@ app.get('/', function(req,res,next){
         }
     };
     request(options, callback);
-    // const list = [];
-    // const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockcount","params":[]}`;
-    // let options = {
-    //     url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
-    //     method: "POST",
-    //     headers: headers,
-    //     body: dataString
-    // }
-    // callback = (error, response, body) => {
-    //     if (error) console.log(error);
-    //     if (!error && response.statusCode == 200) {
-    //         let data = JSON.parse(body);
-    //         const num = Number(data.result)-19;
-    //         // list.push(data.result);
-    //         // data.result => 1351
-    //         // for문 위치
-    //         let result_num = Number(data.result);
-    //         for(let i = result_num; i > result_num-20; i--){
-    //             options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${i}]}`;
-    //             callback1 = (error, response, body) => {
-    //                 if (error) console.log(error);
-    //                 if (!error && response.statusCode == 200) {
-    //                     data = JSON.parse(body);
-    //                     // _data.result => blockhash
-    //                     options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${data.result}"]}`;
-    //                     callback2 = (error, response, body) => {
-    //                         if (error) console.log(error);
-    //                         if (!error && response.statusCode == 200) {
-    //                             data = JSON.parse(body);
-    //                             // console.log(i,' : ',data);
-    //                             // data.result.tx
-    //                             options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getrawtransaction","params":["${data.result.tx[0]}", true]}`;
-    //                             callback3 = (error, response, body) => {
-    //                                 if (error) console.log(error);
-    //                                 if (!error && response.statusCode == 200) {
-    //                                     data = JSON.parse(body);
-    //                                     data.result.blocktime = Unix_timestamp_lower(data.result.blocktime);
-    //                                     // data.result.blocktime = moment(data.result.blocktime).startOf('sec').fromNow()
-    //                                     data.result.blockheight = i;
-    //                                     list.push(data.result);
-    //                                     if(i == num) {
-    //                                         let sort_list;
-    //                                         sort_list = list.sort((a,b) => {
-    //                                             return b.blockheight - a.blockheight;
-    //                                         })
-    //                                         res.send(sort_list);
-    //                                     }
-    //                                 }
-    //                             }
-    //                             request(options, callback3);
-    //                         }
-    //                     }
-    //                     request(options, callback2);
-    //                 }
-    //             }
-    //             request(options, callback1);
-    //         }
-    //     }
-    // }
-    // request(options, callback);
 });
 app.get('/', function(req, res, next){
     res.render('index',{
@@ -218,9 +158,9 @@ app.get('/', function(req, res, next){
         getblockchaininfo : req.datas[0].result,
         getnetworkinfo : req.datas[1].result,
         getmininginfo : req.datas[2].result,
-        listtransactions : req.datas[3].result,
+        // listtransactions : req.datas[3].result,
         difficulty : Math.round(req.datas[0].result.difficulty * 100000)/100000,
-        blocktime: Unix_timestamp(req.blocktime),
+        // blocktime: Unix_timestamp(req.blocktime),
         moment: moment
         // transaction: undefined,
     });
@@ -273,7 +213,6 @@ app.get('/block_transaction', function (req, res, next) {
                                         // console.log(data.result);
                                         // data.result.blocktime = Unix_timestamp_lower(data.result.blocktime)
                                         data.result.mo_time = moment(Unix_timestamp_lower(data.result.blocktime)).startOf('sec').fromNow();
-                                        // data.result.blocktime = moment(data.result.blocktime).startOf('sec').fromNow()
                                         data.result.blockheight = i;
                                         list.push(data.result);
                                         if(i == num) {
@@ -333,6 +272,7 @@ app.get('/block_interval', function (req, res, next) {
 
 ////////////검색///////////////
 app.post('/search', function(req, res) {
+    console.log('body', req.body);
     const blocknum = req.body.block_num;
     const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblockhash","params":[${blocknum}]}`;
     let options = {
@@ -341,11 +281,36 @@ app.post('/search', function(req, res) {
         headers: headers,
         body: dataString
     }
+    let search_result;
     callback = (error, response, body) => {
         if (error) console.log(error);
         if (!error && response.statusCode == 200) {
-            const data = JSON.parse(body); // Object로 나옴
-            console.log('검색', data);
+            let data = JSON.parse(body); // Object로 나옴
+            // console.log('검색', data.result);
+            options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getblock","params":["${data.result}"]}`;
+            callback1 = (error, response, body) => {
+                if (error) console.log(error);
+                if (!error && response.statusCode == 200) {
+                    data = JSON.parse(body);
+                    search_result = data.result;
+                    console.log('sae', search_result.tx[search_result.tx.length - 1])
+                    options.body = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"getrawtransaction","params":["${search_result.tx[search_result.tx.length - 1]}", true]}`;
+                    callback2 = (error, response, body) => {
+                        if (error) console.log(error);
+                        if (!error && response.statusCode == 200) {
+                            data = JSON.parse(body);
+                            search_result.amount = data.result.vout[0].value;
+                            console.log('결과', search_result);
+                            res.render('search',{
+                                block_info : search_result,
+                                title : ejs.render('title')
+                            })
+                        }
+                    }
+                    request(options, callback2);
+                }
+            }
+            request(options, callback1);
         }
     }
     request(options, callback);
