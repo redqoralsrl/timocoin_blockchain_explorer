@@ -300,4 +300,11 @@ body{
 }
 .address_resize{
     width: 140px;
+    cursor: pointer;
+    position: relative;
+}
+.address_copy{
+    opacity: 0;
+    width: 140px;
+    position: absolute;
 }
