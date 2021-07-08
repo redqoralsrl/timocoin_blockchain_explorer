@@ -257,6 +257,42 @@ app.get('/block_interval', function (req, res, next) {
     request(options, callback);
 });
 
+
+app.get("/getrawtransaction/:hex/:hash/:time", function (req, res,next) {
+    const hex = req.params.hex;
+    const hash = req.params.hash;
+    const time = req.params.time;
+    // console.log('blockhash',hash)
+    // console.log("hex",hex);
+      const dataString = `{"jsonrpc":"1.0","id":"${ID_STRING}","method":"decoderawtransaction","params":["${hex}"]}`;
+      const options = {
+          url: `http://${USER}:${PASS}@127.0.0.1:${PORT}/`,
+          method: "POST",
+          headers: headers,
+          body: dataString
+      }
+      callback = (error, response, body) => {
+          if(error) console.log(error);
+          console.log('실행');
+          if(!error && response.statusCode == 200){
+              let data = JSON.parse(body); // Object로 나옴
+            console.log('data',data)
+            console.log('sss',data.result)
+              res.render('getrawtransaction',{
+                  data : data.result,
+                  hash : hash,
+                  hex : hex,
+                  time : time,
+                  logined : req.session.logined,
+                  title : ejs.render('title')
+              });
+              // res.send(data);
+          }
+      };
+      request(options, callback);
+  })
+
+
 ////////////검색///////////////
 app.post('/search', function(req, res) {
     const blocknum = req.body.block_num;
