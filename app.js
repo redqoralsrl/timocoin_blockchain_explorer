@@ -21,7 +21,7 @@ app.use(session); //세션 사용
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
-const indexRouter = require('./routers/index');
+// const indexRouter = require('./routers/index');
 const signupRouter = require('./routers/signup');
 const signinRouter = require('./routers/signin');
 const sendfromRouter = require('./routers/sendfrom');

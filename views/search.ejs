@@ -11,6 +11,15 @@
     <link rel="icon" href="/images/timo.ico" type="image/x-icon">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script>
+        function paste(i){
+            var copyText = document.getElementById(`address_input${i}`);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("주소복사! " + copyText.value);
+        }
+    </script>
 </head>
 <body>
     <%- include('title') %>
