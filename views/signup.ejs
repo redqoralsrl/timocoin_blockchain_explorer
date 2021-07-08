@@ -1,22 +1,35 @@
 <html>
 <head>
     <title>Sign Up</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/styles/sign.css">
     <link rel="shortcut icon" href="/images/timo.ico" type="image/x-icon">
     <link rel="icon" href="/images/timo.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="bg"></div>
     <%- include('title') %>
-    <div class="container">
-        <form action="/signup" method="POST" id="signUpForm" class="sign" name="signup">
+    <div class="wrapper">
+        <div class="container">
             <h1>Sign Up</h1>
-            <input type="text" id="id" name="id" maxlength="15" placeholder="ID" autocomplete="off" required/>
-            <input type="password" id="password" name="password" maxlength="20" placeholder="PASSWORD" autocomplete="off" required>
-            <input type="submit" value="SIGN UP"/>
-            <p><a href="/signin">Sign In</a></p>
-        </form>
+            <form action="/signup" method="POST" id="signUpForm" class="form" name="signup">
+                <input type="text" id="id" name="id" maxlength="15" placeholder="USERNAME" autocomplete="off" required/>
+                <input type="password" id="password" name="password" maxlength="20" placeholder="PASSWORD" autocomplete="off" required>
+                <button type="submit" id="button">SIGN UP</button>
+                <p><a href="/signin" class="goSign">Sign In</a></p>
+            </form>
+        </div>
+    
+        <ul class="bg-bubbles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
     </div>
 </body>
 </html>

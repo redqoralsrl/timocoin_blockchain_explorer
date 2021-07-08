@@ -48,11 +48,11 @@ router.post('/', function(req, res) {
     sendCallback = (error, response, body) => {
         if (!error && response.statusCode == 200) {
             console.log("================> 코인이 잘 보내졌음");
-            res.redirect('/');
+            res.send("<script language=\"javascript\">alert('[ SUCCESS ] : Send SUCCESS'); location.replace('/sendfrom');</script>");
         }
         else {
             console.log("================> 코인 안 보내짐");
-            res.redirect('/sendfrom');
+            res.send("<script language=\"javascript\">alert('[ FAIL ] : Send FAIL'); location.replace('/sendfrom');</script>");
         }
     };
     request(sendOptions, sendCallback);
