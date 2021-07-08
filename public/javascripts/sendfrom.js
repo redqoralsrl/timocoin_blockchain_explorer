@@ -1,5 +1,6 @@
 window.onload = function() {
     let userId = $(".userId").text();
+    let coinCount = $(".coinCount").text();
 
     $.ajax({
         url: "/sendfrom/getbalance",
@@ -15,6 +16,9 @@ window.onload = function() {
     });
 
     $('.send').on("click", ()=> {
+        console.log("coinCount", $(".coinCount").text());
+        console.log("coinCountTYPE", typeof $(".coinCount").text());
+        console.log("coinCountTYPE", Number($(".coinCount").text()));
         $.ajax({
             url: "/sendfrom/getbalance",
             type: "post",
